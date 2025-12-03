@@ -4,12 +4,7 @@
 -- Grupo 8 - SSC0540 Bases de Dados
 -- ============================================================================
 
--- ============================================================================
--- OPERAÇÕES GERAIS (Seção 1.3 do Documento)
--- ============================================================================
-
 -- Consulta 1: Consultar dados de Pacientes
--- Inclui cálculo de Idade (atributo derivado - Nota 1)
 SELECT 
     CPF,
     Nome_Completo,
@@ -61,10 +56,6 @@ SELECT
     END AS Tipo_Material
 FROM MATERIAL M
 ORDER BY M.Nome;
-
--- ============================================================================
--- CONSULTAS COMPLEXAS (Seção 1.3 do Documento)
--- ============================================================================
 
 -- Consulta 5: Trajetória completa de um paciente (histórico de atendimentos)
 SELECT 
@@ -131,7 +122,6 @@ GROUP BY M.Codigo, M.Nome, M.Qtd_Estoque, M.Data_Validade
 ORDER BY M.Qtd_Estoque, M.Data_Validade;
 
 -- Consulta 9: Relatório de filas de espera por unidade e tipo de atendimento
--- Inclui cálculo de Posição (atributo derivado - Nota 2)
 SELECT 
     U.Nome AS Unidade,
     F.Tipo_Atendimento,
@@ -143,7 +133,6 @@ GROUP BY U.Nome, F.Tipo_Atendimento
 ORDER BY Tempo_Medio_Espera_Dias DESC;
 
 -- Consulta 10: Detalhamento da fila de espera com posição de cada paciente
--- Implementação do atributo derivado Posição (Nota 2)
 SELECT 
     P.Nome_Completo AS Paciente,
     F.Tipo_Atendimento,
@@ -171,7 +160,3 @@ HAVING COUNT(DISTINCT MPU.CNPJ_Unidade) = (
     SELECT COUNT(*) FROM UNIDADE_SAUDE
 )
 ORDER BY M.Nome;
-
--- ============================================================================
--- FIM DAS CONSULTAS
--- ============================================================================

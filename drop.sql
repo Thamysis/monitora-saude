@@ -1,7 +1,7 @@
-
 -- ============================================================================
--- Script para Apagar Todas as Tabelas do Sistema de Saúde Pública
--- PostgreSQL
+-- Sistema de Monitoramento de Saúde Pública
+-- Apagar Todas as Tabelas do Sistema - PostgreSQL
+-- Grupo 8 - SSC0540 Bases de Dados
 -- ============================================================================
 
 -- Apagar todas as tabelas na ordem correta (CASCADE remove dependências)

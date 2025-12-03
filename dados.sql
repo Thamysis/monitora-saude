@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Sistema de Monitoramento de Saúde Pública
--- Dados de Exemplo para PostgreSQL
+-- Dados de Exemplo SQL - PostgreSQL
 -- Grupo 8 - SSC0540 Bases de Dados
 -- ============================================================================
 
