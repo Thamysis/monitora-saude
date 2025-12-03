@@ -1,38 +1,46 @@
 import psycopg2
 from psycopg2 import Error
 
+HOST = "localhost"
+DATABASE = "saude_publica"
+USER = "postgres"
+PASSWORD = "password"  # ALTERAR AQUI PARA A SENHA DO SEU DATABASE
+PORT = "5432"
+
+MESSAGE_SUCCESS_CONNECT = "✓ Conexão estabelecida com sucesso!"
+MESSAGE_ERROR_CONNECT = "✗ Erro ao conectar ao banco de dados: "
+MESSAGE_CONNECTION_FINISHED = "✓ Conexão encerrada."
+MESSAGE_ERROR_QUERY = "✗ Erro ao executar query: "
+
 class Database:
     def __init__(self):
         self.connection = None
         self.cursor = None
     
     def conectar(self):
-        """Estabelece conexão com o banco de dados PostgreSQL"""
         try:
             self.connection = psycopg2.connect(
-                host="localhost",
-                database="saude_publica",
-                user="postgres",
-                password="a11819240",  # ALTERE AQUI
-                port="5432"
+                host = HOST,
+                database = DATABASE,
+                user = USER,
+                password = PASSWORD,
+                port = PORT
             )
             self.cursor = self.connection.cursor()
-            print("✓ Conexão estabelecida com sucesso!")
+            print(MESSAGE_SUCCESS_CONNECT)
             return True
         except Error as e:
-            print(f"✗ Erro ao conectar ao banco de dados: {e}")
+            print(MESSAGE_ERROR_CONNECT + e)
             return False
     
     def desconectar(self):
-        """Fecha a conexão com o banco de dados"""
         if self.cursor:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-            print("✓ Conexão encerrada.")
+            print(MESSAGE_CONNECTION_FINISHED)
     
     def executar_query(self, query, params=None):
-        """Executa uma query (INSERT, UPDATE, DELETE)"""
         try:
             if params:
                 self.cursor.execute(query, params)
@@ -41,12 +49,11 @@ class Database:
             self.connection.commit()
             return True
         except Error as e:
-            print(f"✗ Erro ao executar query: {e}")
+            print(MESSAGE_ERROR_QUERY + e)
             self.connection.rollback()
             return False
     
     def executar_consulta(self, query, params=None):
-        """Executa uma consulta (SELECT) e retorna os resultados"""
         try:
             if params:
                 self.cursor.execute(query, params)
@@ -54,5 +61,5 @@ class Database:
                 self.cursor.execute(query)
             return self.cursor.fetchall()
         except Error as e:
-            print(f"✗ Erro ao executar consulta: {e}")
+            print(MESSAGE_ERROR_QUERY + e)
             return []
