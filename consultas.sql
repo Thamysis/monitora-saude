@@ -159,6 +159,19 @@ JOIN PACIENTE P ON F.CPF_Paciente = P.CPF
 JOIN UNIDADE_SAUDE U ON F.CNPJ_Unidade = U.CNPJ
 ORDER BY U.Nome, F.Tipo_Atendimento, Posicao_Fila;
 
+-- Consulta 11: Materiais disponíveis em todas unidades de saúde
+SELECT 
+    M.Codigo,
+    M.Nome,
+    M.Descricao
+FROM MATERIAL M
+JOIN MATERIAL_POR_UNIDADE MPU ON M.Codigo = MPU.Codigo_Material
+GROUP BY M.Codigo, M.Nome, M.Descricao
+HAVING COUNT(DISTINCT MPU.CNPJ_Unidade) = (
+    SELECT COUNT(*) FROM UNIDADE_SAUDE
+)
+ORDER BY M.Nome;
+
 -- ============================================================================
 -- FIM DAS CONSULTAS
 -- ============================================================================
