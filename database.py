@@ -1,16 +1,6 @@
 import psycopg2
 from psycopg2 import Error
-
-HOST = "localhost"
-DATABASE = "saude_publica"
-USER = "postgres"
-PASSWORD = "password"  # ALTERAR AQUI PARA A SENHA DO SEU DATABASE
-PORT = "5432"
-
-MESSAGE_SUCCESS_CONNECT = "✓ Conexão estabelecida com sucesso!"
-MESSAGE_ERROR_CONNECT = "✗ Erro ao conectar ao banco de dados: "
-MESSAGE_CONNECTION_FINISHED = "✓ Conexão encerrada."
-MESSAGE_ERROR_QUERY = "✗ Erro ao executar query: "
+from config import *
 
 class Database:
     def __init__(self):
@@ -20,11 +10,11 @@ class Database:
     def conectar(self):
         try:
             self.connection = psycopg2.connect(
-                host = HOST,
-                database = DATABASE,
-                user = USER,
-                password = PASSWORD,
-                port = PORT
+                host = DB_HOST,
+                database = DB_DATABASE,
+                user = DB_USER,
+                password = DB_PASSWORD,
+                port = DB_PORT
             )
             self.cursor = self.connection.cursor()
             print(MESSAGE_SUCCESS_CONNECT)
@@ -38,7 +28,7 @@ class Database:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-            print(MESSAGE_CONNECTION_FINISHED)
+            print(MESSAGE_CONNECTION_CLOSED)
     
     def executar_query(self, query, params=None):
         try:

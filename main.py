@@ -1,50 +1,43 @@
 import os
 import sys
+from config import *
 
 def limpar_tela():
-    """Limpa a tela do terminal"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def pausar():
-    """Pausa a execução aguardando Enter"""
-    input("\nPressione Enter para continuar...")
+    input(MESSAGE_ENTER_TO_CONTINUE)
 
 def menu_principal():
-    """Exibe o menu principal"""
     print("\n")
     print("="*60)
-    print("   SISTEMA DE SAÚDE PÚBLICA - SÃO CARLOS")
+    print(SYSTEM_NAME)
     print("="*60)
-    print("1. Cadastrar Paciente")
-    print("2. Consultar Todos os Pacientes")
-    print("3. Consultar Paciente por CPF")
-    print("4. Registrar Atendimento")
-    print("5. Consultar Histórico de Paciente")
-    print("6. Consultar Taxa de Ocupação de Leitos")
-    print("7. Consultar Fila de Espera")
-    print("0. Sair")
+    print(MENU_OPTION_1)
+    print(MENU_OPTION_2)
+    print(MENU_OPTION_3)
+    print(MENU_OPTION_4)
+    print(MENU_OPTION_5)
+    print(MENU_OPTION_6)
+    print(MENU_OPTION_7)
+    print(MENU_OPTION_0)
     print("="*60)
-    return input("Escolha uma opção: ").strip()
+    return input(SELECT_OPTION).strip()
 
 def main():
-    """Função principal do sistema"""
-    # Importar módulos
     from database import Database
     from paciente import Paciente
     from atendimento import Atendimento
     
-    # Conectar ao banco de dados
     db = Database()
     if not db.conectar():
-        print("\n✗ Erro: Não foi possível conectar ao banco de dados.")
-        print("Verifique as configurações em database.py")
+        print(MESSAGE_ERROR_CONNECT)
+        print(VERIFY_SETTINGS)
         sys.exit(1)
     
-    # Instanciar módulos
     paciente = Paciente(db)
     atendimento = Atendimento(db)
     
-    # Loop principal
     while True:
         limpar_tela()
         opcao = menu_principal()
@@ -78,12 +71,12 @@ def main():
             pausar()
         
         elif opcao == '0':
-            print("\n✓ Encerrando sistema...")
+            print(CLOSING_SYSTEM)
             db.desconectar()
             break
         
         else:
-            print("\n✗ Opção inválida!")
+            print(INVALID_OPTION)
             pausar()
 
 if __name__ == "__main__":

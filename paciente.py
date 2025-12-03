@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from config import *
 
 class Paciente:
     def __init__(self, db):
@@ -22,34 +23,17 @@ class Paciente:
         estado = input("Estado (SP, RJ, etc): ").strip().upper()
         cep = input("CEP: ").strip()
         
-        query = """
-            INSERT INTO PACIENTE 
-            (CPF, Nome_Completo, Data_Nascimento, Sexo, Rua, Numero, Bairro, Cidade, Estado, CEP)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        
         params = (cpf, nome, data_nasc, sexo, rua, numero, bairro, cidade, estado, cep)
         
-        if self.db.executar_query(query, params):
+        if self.db.executar_query(QUERY_INSERT_PATIENT, params):
             print("\n✓ Paciente cadastrado com sucesso!")
         else:
             print("\n✗ Erro ao cadastrar paciente.")
     
     def listar_todos(self):
         """Lista todos os pacientes com idade calculada"""
-        query = """
-            SELECT 
-                CPF,
-                Nome_Completo,
-                EXTRACT(YEAR FROM AGE(CURRENT_DATE, Data_Nascimento)) AS Idade,
-                Sexo,
-                Cidade,
-                Estado
-            FROM PACIENTE
-            ORDER BY Nome_Completo
-        """
         
-        resultados = self.db.executar_consulta(query)
+        resultados = self.db.executar_consulta(QUERY_SELECT_PATIENT_BY_AGE)
         
         print("\n" + "="*60)
         print("   LISTA DE PACIENTES")
@@ -68,16 +52,7 @@ class Paciente:
         """Consulta um paciente específico por CPF"""
         cpf = input("\nDigite o CPF do paciente: ").strip()
         
-        query = """
-            SELECT 
-                P.CPF, P.Nome_Completo, P.Data_Nascimento,
-                EXTRACT(YEAR FROM AGE(CURRENT_DATE, P.Data_Nascimento)) AS Idade,
-                P.Sexo, P.Rua, P.Numero, P.Bairro, P.Cidade, P.Estado, P.CEP
-            FROM PACIENTE P
-            WHERE P.CPF = %s
-        """
-        
-        resultados = self.db.executar_consulta(query, (cpf,))
+        resultados = self.db.executar_consulta(QUERY_SELECT_PATIENT_BY_CPF, (cpf,))
         
         if not resultados:
             print("\n✗ Paciente não encontrado!")

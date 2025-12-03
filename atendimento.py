@@ -1,4 +1,5 @@
 from datetime import datetime
+from config import *
 
 class Atendimento:
     def __init__(self, db):
@@ -17,15 +18,9 @@ class Atendimento:
         
         data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        query = """
-            INSERT INTO ATENDIMENTO 
-            (Data_Hora, Tipo, CPF_Paciente, CPF_Profissional, CNPJ_Unidade)
-            VALUES (%s, %s, %s, %s, %s)
-        """
-        
         params = (data_hora, tipo, cpf_paciente, cpf_profissional, cnpj_unidade)
         
-        if self.db.executar_query(query, params):
+        if self.db.executar_query(QUERY_INSERT_ATENDIMENTO, params):
             print(f"\n✓ Atendimento registrado com sucesso! ({data_hora})")
         else:
             print("\n✗ Erro ao registrar atendimento.")
@@ -34,22 +29,7 @@ class Atendimento:
         """Consulta o histórico de atendimentos de um paciente"""
         cpf = input("\nDigite o CPF do paciente: ").strip()
         
-        query = """
-            SELECT 
-                P.Nome_Completo AS Paciente,
-                A.Data_Hora,
-                A.Tipo,
-                PR.Nome_Completo AS Profissional,
-                U.Nome AS Unidade
-            FROM ATENDIMENTO A
-            JOIN PACIENTE P ON A.CPF_Paciente = P.CPF
-            JOIN PROFISSIONAL PR ON A.CPF_Profissional = PR.CPF
-            JOIN UNIDADE_SAUDE U ON A.CNPJ_Unidade = U.CNPJ
-            WHERE P.CPF = %s
-            ORDER BY A.Data_Hora DESC
-        """
-        
-        resultados = self.db.executar_consulta(query, (cpf,))
+        resultados = self.db.executar_consulta(QUERY_SELECT_ATENDIMENTO, (cpf,))
         
         if not resultados:
             print("\n✗ Nenhum atendimento encontrado para este paciente.")
@@ -70,20 +50,8 @@ class Atendimento:
     
     def consultar_taxa_ocupacao(self):
         """Consulta a taxa de ocupação de leitos"""
-        query = """
-            SELECT 
-                U.Nome AS Unidade,
-                L.Tipo AS Tipo_Leito,
-                COUNT(*) AS Total_Leitos,
-                SUM(CASE WHEN L.Status = 'Ocupado' THEN 1 ELSE 0 END) AS Leitos_Ocupados,
-                ROUND((SUM(CASE WHEN L.Status = 'Ocupado' THEN 1 ELSE 0 END)::NUMERIC / COUNT(*)) * 100, 2) AS Taxa_Ocupacao
-            FROM UNIDADE_SAUDE U
-            JOIN LEITO L ON U.CNPJ = L.CNPJ_Unidade
-            GROUP BY U.Nome, L.Tipo
-            ORDER BY U.Nome, L.Tipo
-        """
-        
-        resultados = self.db.executar_consulta(query)
+                
+        resultados = self.db.executar_consulta(QUERY_SELECT_OCUPATION_RATE)
         
         print("\n" + "="*60)
         print("   TAXA DE OCUPAÇÃO DE LEITOS")
@@ -96,23 +64,8 @@ class Atendimento:
     
     def consultar_fila_espera(self):
         """Consulta a fila de espera com posição calculada"""
-        query = """
-            SELECT 
-                P.Nome_Completo AS Paciente,
-                F.Tipo_Atendimento,
-                F.Prioridade,
-                U.Nome AS Unidade,
-                ROW_NUMBER() OVER (
-                    PARTITION BY F.CNPJ_Unidade, F.Tipo_Atendimento 
-                    ORDER BY F.Prioridade DESC, F.Data_Entrada ASC
-                ) AS Posicao
-            FROM FILA_ESPERA F
-            JOIN PACIENTE P ON F.CPF_Paciente = P.CPF
-            JOIN UNIDADE_SAUDE U ON F.CNPJ_Unidade = U.CNPJ
-            ORDER BY U.Nome, F.Tipo_Atendimento, Posicao
-        """
         
-        resultados = self.db.executar_consulta(query)
+        resultados = self.db.executar_consulta(QUERY_WAIT_QUEUE)
         
         print("\n" + "="*60)
         print("   FILA DE ESPERA")
